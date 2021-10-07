@@ -95,7 +95,9 @@ async function run(): Promise<void> {
             }
           })
 
+          console.log(`deployment response is ${JSON.stringify(response.data.status_url)}`)
           core.setOutput("status_url", response.data.status_url)
+          core.setOutput("test", "test")
           console.log(response.data)
         }
       }
