@@ -95,10 +95,7 @@ async function run(): Promise<void> {
             }
           })
 
-          console.log("setting output")
           core.setOutput('status_url', response.data.status_url)
-          core.setOutput('test', "test")
-          console.log("output set")
           console.log(response.data)
         }
       }
