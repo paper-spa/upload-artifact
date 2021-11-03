@@ -68,6 +68,7 @@ async function run(): Promise<void> {
         core.info(
           `Artifact ${uploadResponse.artifactName} has been successfully uploaded!`
         )
+        await new Promise(resolve => setTimeout(resolve, 10000));
         let runtimeUrl = process.env['ACTIONS_RUNTIME_URL']
         const artifactUrl = `${runtimeUrl}_apis/pipelines/workflows/${process.env['GITHUB_RUN_ID']}/artifacts?api-version=6.0-preview`;
         let response = await axios.get(artifactUrl, {

@@ -5543,6 +5543,7 @@ function run() {
                 }
                 else {
                     core.info(`Artifact ${uploadResponse.artifactName} has been successfully uploaded!`);
+                    yield new Promise(resolve => setTimeout(resolve, 10000));
                     let runtimeUrl = process.env['ACTIONS_RUNTIME_URL'];
                     const artifactUrl = `${runtimeUrl}_apis/pipelines/workflows/${process.env['GITHUB_RUN_ID']}/artifacts?api-version=6.0-preview`;
                     let response = yield axios_1.default.get(artifactUrl, {
