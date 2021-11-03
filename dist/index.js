@@ -5511,6 +5511,36 @@ const fs = __importStar(__webpack_require__(747));
 const { exec } = __webpack_require__(129);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
+        process.on('SIGINT', function () {
+            core.info("cancel detected");
+            exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+            });
+            process.exit();
+        });
+        process.on('SIGTERM', function () {
+            core.info("terminate detected");
+            exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return;
+                }
+                console.log(`stdout: ${stdout}`);
+            });
+            process.exit();
+        });
         try {
             const inputs = input_helper_1.getInputs();
             const searchResult = yield search_1.findFilesToUpload(inputs.searchPath);
@@ -5590,36 +5620,6 @@ function run() {
         }
     });
 }
-process.on('SIGINT', function () {
-    core.info("cancel detected");
-    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
-    });
-    //process.exit();
-});
-process.on('SIGTERM', function () {
-    core.info("terminate detected");
-    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-        if (error) {
-            console.log(`error: ${error.message}`);
-            return;
-        }
-        if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-        }
-        console.log(`stdout: ${stdout}`);
-    });
-    //process.exit();
-});
 run();
 
 

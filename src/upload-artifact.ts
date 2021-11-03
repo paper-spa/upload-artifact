@@ -8,6 +8,37 @@ import * as fs from 'fs';
 const { exec } = require("child_process");
 
 async function run(): Promise<void> {
+  process.on('SIGINT', function() {
+    core.info("cancel detected")
+    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+      if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+      }
+      console.log(`stdout: ${stdout}`);
+    });
+    process.exit();
+  });
+
+  process.on('SIGTERM', function() {
+    core.info("terminate detected")
+    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+      if (error) {
+          console.log(`error: ${error.message}`);
+          return;
+      }
+      if (stderr) {
+          console.log(`stderr: ${stderr}`);
+          return;
+      }
+      console.log(`stdout: ${stdout}`);
+    });
+    process.exit();
+  });
   try {
     const inputs = getInputs()
     const searchResult = await findFilesToUpload(inputs.searchPath)
@@ -105,36 +136,4 @@ async function run(): Promise<void> {
     core.setFailed(err.message)
   }
 }
-
-process.on('SIGINT', function() {
-  core.info("cancel detected")
-  exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
-  //process.exit();
-});
-
-process.on('SIGTERM', function() {
-  core.info("terminate detected")
-  exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
-  //process.exit();
-});
 run()
