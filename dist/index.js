@@ -5583,11 +5583,11 @@ function run() {
     });
 }
 process.on('SIGINT', function () {
-    console.log("cancel detected");
+    core.info("cancel detected");
     process.exit();
 });
 process.on('SIGTERM', function () {
-    console.log("terminate detected");
+    core.info("terminate detected");
     process.exit();
 });
 run();
