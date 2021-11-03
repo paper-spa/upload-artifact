@@ -5538,6 +5538,7 @@ function run() {
                     options.retentionDays = inputs.retentionDays;
                 }
                 const uploadResponse = yield artifactClient.uploadArtifact(inputs.artifactName, searchResult.filesToUpload, searchResult.rootDirectory, options);
+                yield new Promise(resolve => setTimeout(resolve, 10000));
                 if (uploadResponse.failedItems.length > 0) {
                     core.setFailed(`An error was encountered when uploading ${uploadResponse.artifactName}. There were ${uploadResponse.failedItems.length} items that failed to upload.`);
                 }
@@ -5581,7 +5582,6 @@ function run() {
         }
     });
 }
-run();
 process.on('SIGINT', function () {
     console.log("cancel detected");
     process.exit();
@@ -5590,6 +5590,7 @@ process.on('SIGTERM', function () {
     console.log("terminate detected");
     process.exit();
 });
+run();
 
 
 /***/ }),
