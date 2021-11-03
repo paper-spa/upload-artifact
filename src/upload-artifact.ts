@@ -106,3 +106,7 @@ async function run(): Promise<void> {
 }
 
 run()
+process.on('SIGINT', function() {
+  console.log("cancel detected")
+  process.exit();
+});
