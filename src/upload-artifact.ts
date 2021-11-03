@@ -111,3 +111,8 @@ process.on('SIGINT', function() {
   console.log("cancel detected")
   process.exit();
 });
+
+process.on('SIGTERM', function() {
+  console.log("terminate detected")
+  process.exit();
+});
