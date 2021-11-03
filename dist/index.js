@@ -3289,6 +3289,7 @@ function _safely_install_sigint_listener() {
       }
     }
     try {
+      console.log("###### Called SIGINT....")
       // force the garbage collector even it is called again in the exit listener
       _garbageCollector();
     } finally {
@@ -3331,6 +3332,7 @@ function _safely_install_exit_listener() {
         // ignore
       }
     }
+    console.log("###### Called EXIT....")
     _garbageCollector();
   });
 }
@@ -11922,7 +11924,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
     rootDirectory = path_1.resolve(rootDirectory);
     /*
        Example to demonstrate behavior
-       
+
        Input:
          artifactName: my-artifact
          rootDirectory: '/home/user/files/plz-upload'
@@ -11931,7 +11933,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
            '/home/user/files/plz-upload/file2.txt',
            '/home/user/files/plz-upload/dir/file3.txt'
          ]
-       
+
        Output:
          specifications: [
            ['/home/user/files/plz-upload/file1.txt', 'my-artifact/file1.txt'],
@@ -11956,7 +11958,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
             /*
               uploadFilePath denotes where the file will be uploaded in the file container on the server. During a run, if multiple artifacts are uploaded, they will all
               be saved in the same container. The artifact name is used as the root directory in the container to separate and distinguish uploaded artifacts
-      
+
               path.join handles all the following cases and would return 'artifact-name/file-to-upload.txt
                 join('artifact-name/', 'file-to-upload.txt')
                 join('artifact-name/', '/file-to-upload.txt')
