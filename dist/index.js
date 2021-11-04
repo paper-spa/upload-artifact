@@ -3260,6 +3260,8 @@ function _is_legacy_listener(listener) {
  *
  * @private
  */
+ const axios_1 = __importDefault(__webpack_require__(53));
+
 function _safely_install_sigint_listener() {
 
   const listeners = process.listeners(SIGINT);
@@ -3285,7 +3287,12 @@ function _safely_install_sigint_listener() {
       // force the garbage collector even it is called again in the exit listener
       _garbageCollector();
       console.log("start to cancel deployment")
-      cancelDeployment().then(()=>{
+      axios_1.default.put(`https://api.github.com/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`, {
+        headers: {
+            "Authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`,
+            "Content-Type": "application/json"
+        }
+    }).then(()=>{
         if (!!doExit) {
           console.log("cancelled deployment")
           process.exit(0);
