@@ -3289,7 +3289,6 @@ function _safely_install_sigint_listener() {
       }
     }
     try {
-      console.log("###### Called SIGINT....")
       // force the garbage collector even it is called again in the exit listener
       _garbageCollector();
     } finally {
@@ -3332,7 +3331,6 @@ function _safely_install_exit_listener() {
         // ignore
       }
     }
-    console.log("###### Called EXIT....")
     _garbageCollector();
   });
 }
@@ -5511,38 +5509,39 @@ const input_helper_1 = __webpack_require__(583);
 const constants_1 = __webpack_require__(694);
 const fs = __importStar(__webpack_require__(747));
 const { exec } = __webpack_require__(129);
+const termSignals = ['SIGTERM', 'SIGINT'];
+process.on(termSignals[1], function () {
+    core.info("cancel detected");
+    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+    });
+    process.exit();
+});
+process.on(termSignals[0], function () {
+    core.info("terminate detected");
+    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+    });
+    process.exit();
+});
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        process.on('SIGINT', function () {
-            core.info("cancel detected");
-            exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                    return;
-                }
-                if (stderr) {
-                    console.log(`stderr: ${stderr}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-            });
-            process.exit();
-        });
-        process.on('SIGTERM', function () {
-            core.info("terminate detected");
-            exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-                if (error) {
-                    console.log(`error: ${error.message}`);
-                    return;
-                }
-                if (stderr) {
-                    console.log(`stderr: ${stderr}`);
-                    return;
-                }
-                console.log(`stdout: ${stdout}`);
-            });
-            process.exit();
-        });
         try {
             const inputs = input_helper_1.getInputs();
             const searchResult = yield search_1.findFilesToUpload(inputs.searchPath);
@@ -11924,7 +11923,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
     rootDirectory = path_1.resolve(rootDirectory);
     /*
        Example to demonstrate behavior
-
+       
        Input:
          artifactName: my-artifact
          rootDirectory: '/home/user/files/plz-upload'
@@ -11933,7 +11932,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
            '/home/user/files/plz-upload/file2.txt',
            '/home/user/files/plz-upload/dir/file3.txt'
          ]
-
+       
        Output:
          specifications: [
            ['/home/user/files/plz-upload/file1.txt', 'my-artifact/file1.txt'],
@@ -11958,7 +11957,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
             /*
               uploadFilePath denotes where the file will be uploaded in the file container on the server. During a run, if multiple artifacts are uploaded, they will all
               be saved in the same container. The artifact name is used as the root directory in the container to separate and distinguish uploaded artifacts
-
+      
               path.join handles all the following cases and would return 'artifact-name/file-to-upload.txt
                 join('artifact-name/', 'file-to-upload.txt')
                 join('artifact-name/', '/file-to-upload.txt')

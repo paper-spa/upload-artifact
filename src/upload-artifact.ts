@@ -5,40 +5,42 @@ import { findFilesToUpload } from './search'
 import { getInputs } from './input-helper'
 import { NoFileOptions } from './constants'
 import * as fs from 'fs';
+
 const { exec } = require("child_process");
+const termSignals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
+process.on(termSignals[1], function() {
+  core.info("cancel detected")
+  exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+    if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+  process.exit();
+});
+
+process.on(termSignals[0], function() {
+  core.info("terminate detected")
+  exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
+    if (error) {
+        console.log(`error: ${error.message}`);
+        return;
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+  process.exit();
+});
 
 async function run(): Promise<void> {
-  process.on('SIGINT', function() {
-    core.info("cancel detected")
-    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-      }
-      console.log(`stdout: ${stdout}`);
-    });
-    process.exit();
-  });
-
-  process.on('SIGTERM', function() {
-    core.info("terminate detected")
-    exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-          return;
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-          return;
-      }
-      console.log(`stdout: ${stdout}`);
-    });
-    process.exit();
-  });
   try {
     const inputs = getInputs()
     const searchResult = await findFilesToUpload(inputs.searchPath)
@@ -136,4 +138,5 @@ async function run(): Promise<void> {
     core.setFailed(err.message)
   }
 }
+
 run()
