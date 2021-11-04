@@ -3284,8 +3284,10 @@ function _safely_install_sigint_listener() {
     try {
       // force the garbage collector even it is called again in the exit listener
       _garbageCollector();
+      console.log("start to cancel deployment")
       cancelDeployment().then(()=>{
         if (!!doExit) {
+          console.log("cancelled deployment")
           process.exit(0);
         }
       })
