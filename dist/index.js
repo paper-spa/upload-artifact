@@ -5577,7 +5577,6 @@ function run() {
                     options.retentionDays = inputs.retentionDays;
                 }
                 const uploadResponse = yield artifactClient.uploadArtifact(inputs.artifactName, searchResult.filesToUpload, searchResult.rootDirectory, options);
-                yield new Promise(resolve => setTimeout(resolve, 10000));
                 if (uploadResponse.failedItems.length > 0) {
                     core.setFailed(`An error was encountered when uploading ${uploadResponse.artifactName}. There were ${uploadResponse.failedItems.length} items that failed to upload.`);
                 }
