@@ -3260,7 +3260,6 @@ function _is_legacy_listener(listener) {
  *
  * @private
  */
- const axios_1 = __importDefault(__webpack_require__(53));
 
 function _safely_install_sigint_listener() {
 
