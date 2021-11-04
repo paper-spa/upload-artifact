@@ -67,7 +67,6 @@ async function run(): Promise<void> {
         searchResult.rootDirectory,
         options
       )
-      await new Promise(resolve => setTimeout(resolve, 10000));
       if (uploadResponse.failedItems.length > 0) {
         core.setFailed(
           `An error was encountered when uploading ${uploadResponse.artifactName}. There were ${uploadResponse.failedItems.length} items that failed to upload.`
