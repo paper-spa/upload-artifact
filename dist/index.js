@@ -3287,16 +3287,18 @@ function _safely_install_sigint_listener() {
       _garbageCollector();
       console.log("start to cancel deployment")
       var http = require("https");
+      const input_helper_1 = __webpack_require__(583);
+      const inputs = input_helper_1.getInputs();
       var options = {
         "method": "PUT",
         "hostname": "api.github.com",
         "port": null,
-        "path": `/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`,
+        "path": `/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}/cancel`,
         "headers": {
           "accept": "application/vnd.github.v3+json",
           "user-agent": "actions-runner",
           "content-type": "application/json",
-          "authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`
+          "authorization": `Bearer ${inputs.token}`
         }
       };
 
