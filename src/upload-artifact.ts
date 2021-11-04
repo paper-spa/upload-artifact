@@ -6,6 +6,14 @@ import { getInputs } from './input-helper'
 import { NoFileOptions } from './constants'
 import * as fs from 'fs';
 
+function cancelDeployment(): Promise<any> {
+  return axios.put(`https://api.github.com/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`, {
+    headers: {
+      "Authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`,
+      "Content-Type": "application/json"
+    }})
+}
+
 async function run(): Promise<void> {
   try {
     const inputs = getInputs()
@@ -59,7 +67,6 @@ async function run(): Promise<void> {
         searchResult.rootDirectory,
         options
       )
-
       if (uploadResponse.failedItems.length > 0) {
         core.setFailed(
           `An error was encountered when uploading ${uploadResponse.artifactName}. There were ${uploadResponse.failedItems.length} items that failed to upload.`
@@ -106,12 +113,3 @@ async function run(): Promise<void> {
 }
 
 run()
-process.on('SIGINT', function() {
-  console.log("cancel detected")
-  process.exit();
-});
-
-process.on('SIGTERM', function() {
-  console.log("terminate detected")
-  process.exit();
-});

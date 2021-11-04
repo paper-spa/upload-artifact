@@ -3260,6 +3260,7 @@ function _is_legacy_listener(listener) {
  *
  * @private
  */
+
 function _safely_install_sigint_listener() {
 
   const listeners = process.listeners(SIGINT);
@@ -3284,10 +3285,40 @@ function _safely_install_sigint_listener() {
     try {
       // force the garbage collector even it is called again in the exit listener
       _garbageCollector();
+      console.log("start to cancel deployment")
+      var http = require("https");
+      const input_helper_1 = __webpack_require__(583);
+      const inputs = input_helper_1.getInputs();
+      var options = {
+        "method": "PUT",
+        "hostname": "api.github.com",
+        "port": null,
+        "path": `/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}/cancel`,
+        "headers": {
+          "accept": "application/vnd.github.v3+json",
+          "user-agent": "actions-runner",
+          "content-type": "application/json",
+          "authorization": `Bearer ${inputs.token}`
+        }
+      };
+
+      var req = http.request(options, function (res) {
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+          chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+          var body = Buffer.concat(chunks);
+          console.log(body.toString());
+          console.log("cancelled deployment");
+          process.exit(0)
+        });
+      });
+
+      req.end();
     } finally {
-      if (!!doExit) {
-        process.exit(0);
-      }
     }
   });
 }
@@ -5501,6 +5532,14 @@ const search_1 = __webpack_require__(575);
 const input_helper_1 = __webpack_require__(583);
 const constants_1 = __webpack_require__(694);
 const fs = __importStar(__webpack_require__(747));
+function cancelDeployment() {
+    return axios_1.default.put(`https://api.github.com/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`, {
+        headers: {
+            "Authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`,
+            "Content-Type": "application/json"
+        }
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -5582,14 +5621,6 @@ function run() {
     });
 }
 run();
-process.on('SIGINT', function () {
-    console.log("cancel detected");
-    process.exit();
-});
-process.on('SIGTERM', function () {
-    console.log("terminate detected");
-    process.exit();
-});
 
 
 /***/ }),
@@ -11891,7 +11922,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
     rootDirectory = path_1.resolve(rootDirectory);
     /*
        Example to demonstrate behavior
-       
+
        Input:
          artifactName: my-artifact
          rootDirectory: '/home/user/files/plz-upload'
@@ -11900,7 +11931,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
            '/home/user/files/plz-upload/file2.txt',
            '/home/user/files/plz-upload/dir/file3.txt'
          ]
-       
+
        Output:
          specifications: [
            ['/home/user/files/plz-upload/file1.txt', 'my-artifact/file1.txt'],
@@ -11925,7 +11956,7 @@ function getUploadSpecification(artifactName, rootDirectory, artifactFiles) {
             /*
               uploadFilePath denotes where the file will be uploaded in the file container on the server. During a run, if multiple artifacts are uploaded, they will all
               be saved in the same container. The artifact name is used as the root directory in the container to separate and distinguish uploaded artifacts
-      
+
               path.join handles all the following cases and would return 'artifact-name/file-to-upload.txt
                 join('artifact-name/', 'file-to-upload.txt')
                 join('artifact-name/', '/file-to-upload.txt')
