@@ -6,39 +6,13 @@ import { getInputs } from './input-helper'
 import { NoFileOptions } from './constants'
 import * as fs from 'fs';
 
-const { exec } = require("child_process");
-const termSignals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT']
-process.on(termSignals[1], function() {
-  core.info("cancel detected")
-  exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
-  process.exit();
-});
-
-process.on(termSignals[0], function() {
-  core.info("terminate detected")
-  exec("curl https://ens46ttefdhs1qr.m.pipedream.net", (error, stdout, stderr) => {
-    if (error) {
-        console.log(`error: ${error.message}`);
-        return;
-    }
-    if (stderr) {
-        console.log(`stderr: ${stderr}`);
-        return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
-  process.exit();
-});
+function cancelDeployment(): Promise<any> {
+  return axios.put(`https://api.github.com/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`, {
+    headers: {
+      "Authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`,
+      "Content-Type": "application/json"
+    }})
+}
 
 async function run(): Promise<void> {
   try {
