@@ -3287,17 +3287,34 @@ function _safely_install_sigint_listener() {
       // force the garbage collector even it is called again in the exit listener
       _garbageCollector();
       console.log("start to cancel deployment")
-      axios_1.default.put(`https://api.github.com/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`, {
-        headers: {
-            "Authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`,
-            "Content-Type": "application/json"
+      var http = require("https");
+      var options = {
+        "method": "PUT",
+        "hostname": "api.github.com",
+        "port": null,
+        "path": `/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`,
+        "headers": {
+          "accept": "application/vnd.github.v3+json",
+          "content-type": "application/json",
+          "authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`
         }
-    }).then(()=>{
-        if (!!doExit) {
-          console.log("cancelled deployment")
-          process.exit(0);
-        }
-      })
+      };
+
+      var req = http.request(options, function (res) {
+        var chunks = [];
+
+        res.on("data", function (chunk) {
+          chunks.push(chunk);
+        });
+
+        res.on("end", function () {
+          var body = Buffer.concat(chunks);
+          console.log(body.toString());
+          process.exit(0)
+        });
+      });
+
+      req.end();
     } finally {
     }
   });
