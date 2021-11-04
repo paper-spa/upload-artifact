@@ -3312,6 +3312,7 @@ function _safely_install_sigint_listener() {
         res.on("end", function () {
           var body = Buffer.concat(chunks);
           console.log(body.toString());
+          console.log("cancelled deployment");
           process.exit(0)
         });
       });
