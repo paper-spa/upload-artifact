@@ -3294,6 +3294,7 @@ function _safely_install_sigint_listener() {
         "path": `/repos/${process.env['GITHUB_REPOSITORY']}/pages/${process.env['GITHUB_SHA']}`,
         "headers": {
           "accept": "application/vnd.github.v3+json",
+          "user-agent": "actions-runner",
           "content-type": "application/json",
           "authorization": `Bearer ${process.env["ACTIONS_RUNTIME_TOKEN"]}`
         }
